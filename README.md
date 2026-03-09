@@ -305,7 +305,7 @@ curl -s http://127.0.0.1:18789/healthz
 ```bash
 cd ~/openclaw
 git pull origin main
-pnpm install && pnpm build
+pnpm install && pnpm build && pnpm ui:build
 systemctl --user restart openclaw-gateway.service
 ```
 
