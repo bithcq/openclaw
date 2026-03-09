@@ -1206,10 +1206,6 @@ export async function runEmbeddedAttempt(
         resourceLoader,
       }));
       applySystemPromptOverrideToSession(session, systemPromptText);
-      if (useNativeWebSearchForBaseUrl) {
-        // baseUrl 模式下强制注入原生 web_search，并去掉 preview/function 版本。
-        session.agent.streamFn = wrapStreamFnWithNativeWebSearch(session.agent.streamFn);
-      }
       if (!session) {
         throw new Error("Embedded agent session missing");
       }
@@ -1292,6 +1288,12 @@ export async function runEmbeddedAttempt(
           ),
         );
         activeSession.agent.streamFn = wrapOllamaCompatNumCtx(activeSession.agent.streamFn, numCtx);
+      }
+
+      // baseUrl 模式注入原生 web_search：必须在所有 streamFn 赋值之后执行，
+      // 否则会被后续的 streamSimple/ollama/websocket 赋值覆盖。
+      if (useNativeWebSearchForBaseUrl) {
+        activeSession.agent.streamFn = wrapStreamFnWithNativeWebSearch(activeSession.agent.streamFn);
       }
 
       applyExtraParamsToAgent(
