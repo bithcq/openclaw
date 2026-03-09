@@ -1,0 +1,6 @@
+* text=auto eol=lf
+CLAUDE.md -text
+src/gateway/server-methods/CLAUDE.md -text
+
+# rebase 时永远保留定制版 README.md，不被官方覆盖
+README.md merge=keep-custom
