@@ -1029,7 +1029,11 @@ export async function runEmbeddedAttempt(
       runtimeInfo,
       messageToolHints,
       sandboxInfo,
-      tools,
+      // baseUrl 模式注入原生 web_search 时，把 web_search 加入系统提示的工具列表，
+      // 让模型知道自己可以联网搜索（实际调用由 wrapStreamFnWithNativeWebSearch 透传给 API）。
+      tools: useNativeWebSearchForBaseUrl
+        ? [...tools, { name: "web_search" } as (typeof tools)[number]]
+        : tools,
       modelAliasLines: buildModelAliasLines(params.config),
       userTimezone,
       userTime,
