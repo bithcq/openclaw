@@ -171,6 +171,16 @@ openclaw config set gateway.bind lan
 systemctl --user restart openclaw-gateway.service
 ```
 
+### 浏览器访问 Control UI
+
+`bind=lan` 模式下需要 token 认证，浏览器不会弹出输入框。用以下命令生成带 token 的访问链接：
+
+```bash
+openclaw dashboard --no-open
+```
+
+复制输出的 URL 到浏览器打开即可。
+
 ---
 
 ## 企业微信回调
