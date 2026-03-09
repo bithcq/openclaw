@@ -102,6 +102,15 @@ function rewritePayloadWithNativeWebSearch(payload: unknown): void {
   }
   payloadRecord.tools = nextTools;
   normalizeToolChoiceForNativeWebSearch(payloadRecord);
+  // 调试日志：确认 web_search 注入到 payload
+  const toolTypes = nextTools.map((t) => {
+    if (t && typeof t === "object") {
+      const obj = t as Record<string, unknown>;
+      return obj.type ?? (obj as { function?: { name?: string } }).function?.name;
+    }
+    return "unknown";
+  });
+  console.error(`[native-web-search] payload tools: ${JSON.stringify(toolTypes)}`);
 }
 
 export function shouldUseNativeWebSearchForBaseUrl(params: {
@@ -109,9 +118,11 @@ export function shouldUseNativeWebSearchForBaseUrl(params: {
   tools: NamedTool[];
 }): boolean {
   const baseUrl = params.model?.baseUrl?.trim();
+  const result = Boolean(baseUrl);
+  // 调试日志：确认判断逻辑
+  console.error(`[native-web-search] shouldUse: baseUrl=${baseUrl ?? "undefined"}, result=${result}, toolCount=${params.tools.length}`);
   // 只要有 baseUrl 就启用原生 web_search，不再要求 tools 列表中预先存在 web_search。
-  // 这样即使 tools.profile=coding 过滤掉了本地 web_search，也能注入模型原生版本。
-  return Boolean(baseUrl);
+  return result;
 }
 
 export function filterLocalWebSearchTools<T extends NamedTool>(tools: T[]): T[] {
