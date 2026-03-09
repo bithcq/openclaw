@@ -109,10 +109,9 @@ export function shouldUseNativeWebSearchForBaseUrl(params: {
   tools: NamedTool[];
 }): boolean {
   const baseUrl = params.model?.baseUrl?.trim();
-  if (!baseUrl) {
-    return false;
-  }
-  return params.tools.some((tool) => isLocalWebSearchTool(tool));
+  // 只要有 baseUrl 就启用原生 web_search，不再要求 tools 列表中预先存在 web_search。
+  // 这样即使 tools.profile=coding 过滤掉了本地 web_search，也能注入模型原生版本。
+  return Boolean(baseUrl);
 }
 
 export function filterLocalWebSearchTools<T extends NamedTool>(tools: T[]): T[] {
