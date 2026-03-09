@@ -97,9 +97,10 @@ git clone https://github.com/bithcq/openclaw.git
 cd openclaw
 pnpm install
 pnpm build
+pnpm ui:build   # 构建浏览器 Control UI 前端资源
 ```
 
-已有仓库则 `cd ~/openclaw && git pull origin main && pnpm install && pnpm build`。
+已有仓库则 `cd ~/openclaw && git pull origin main && pnpm install && pnpm build && pnpm ui:build`。
 
 #### 6. 验证
 
