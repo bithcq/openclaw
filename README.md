@@ -157,6 +157,20 @@ openclaw onboard --install-daemon
 
 `--install-daemon` 会自动创建 systemd 用户服务并启动 Gateway。
 
+### 开放局域网访问
+
+Gateway 默认只监听 `127.0.0.1`（loopback），企业微信回调需要从外部访问，必须改为监听局域网：
+
+```bash
+openclaw config set gateway.bind lan
+```
+
+设置后重启服务生效：
+
+```bash
+systemctl --user restart openclaw-gateway.service
+```
+
 ---
 
 ## 企业微信回调
