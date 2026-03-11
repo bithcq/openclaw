@@ -32,13 +32,13 @@ importers:
         version: 3.1004.0
       '@buape/carbon':
         specifier: 0.0.0-beta-20260216184201
-        version: 0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(hono@4.12.5)(opusscript@0.1.1)
+        version: 0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(hono@4.12.5)(opusscript@0.1.1)
       '@clack/prompts':
         specifier: ^1.1.0
         version: 1.1.0
       '@discordjs/voice':
         specifier: ^0.19.0
-        version: 0.19.0(@discordjs/opus@0.10.0)(opusscript@0.1.1)
+        version: 0.19.0(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1)
       '@grammyjs/runner':
         specifier: ^2.0.3
         version: 2.0.3(grammy@1.41.1)
@@ -339,7 +339,7 @@ importers:
         version: 10.6.1
       openclaw:
         specifier: '>=2026.3.2'
-        version: 2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3))
+        version: 2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(ffmpeg-static@5.3.0)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3))
 
   extensions/imessage: {}
 
@@ -400,7 +400,7 @@ importers:
     dependencies:
       openclaw:
         specifier: '>=2026.3.2'
-        version: 2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3))
+        version: 2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(ffmpeg-static@5.3.0)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3))
 
   extensions/memory-lancedb:
     dependencies:
@@ -501,9 +501,15 @@ importers:
 
   extensions/wecom:
     dependencies:
+      ffmpeg-static:
+        specifier: ^5.3.0
+        version: 5.3.0
       undici:
         specifier: ^7.22.0
         version: 7.22.0
+      ws:
+        specifier: ^8.19.0
+        version: 8.19.0
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -1050,6 +1056,10 @@ packages:
 
   '@d-fischer/typed-event-emitter@3.3.3':
     resolution: {integrity: sha512-OvSEOa8icfdWDqcRtjSEZtgJTFOFNgTjje7zaL0+nAtu2/kZtRCSK5wUMrI/aXtCH8o0Qz2vA8UqkhWUTARFQQ==}
+
+  '@derhuerst/http-basic@8.2.4':
+    resolution: {integrity: sha512-F9rL9k9Xjf5blCz8HsJRO4diy111cayL2vkY2XE4r4t3n0yPXVYy3KD3nJ1qbrSn9743UWSXH4IwuCa/HWlGFw==}
+    engines: {node: '>=6.0.0'}
 
   '@discordjs/node-pre-gyp@0.4.5':
     resolution: {integrity: sha512-YJOVVZ545x24mHzANfYoy0BJX5PDyeZlpiJjDkUBM/V/Ao7TFX9lcUvCN4nr0tbr5ubeaXxtEBILUrHtTphVeQ==}
@@ -4080,6 +4090,10 @@ packages:
     resolution: {integrity: sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==}
     engines: {node: '>= 6'}
 
+  concat-stream@2.0.0:
+    resolution: {integrity: sha512-MWufYdFw53ccGjCA+Ol7XJYpAlW6/prSMzuPOTRnJGcGzuhLn4Scrz7qf6o8bROZ514ltazcIFJZevcfbo0x7A==}
+    engines: {'0': node >= 6.0}
+
   console-control-strings@1.1.0:
     resolution: {integrity: sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==}
 
@@ -4302,6 +4316,10 @@ packages:
     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
 
+  env-paths@2.2.1:
+    resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
+    engines: {node: '>=6'}
+
   env-var@7.5.0:
     resolution: {integrity: sha512-mKZOzLRN0ETzau2W2QXefbFjo5EF4yWq28OyKb9ICdeNhHJlOE/pHHnz4hdYJ9cNZXcJHo5xN4OT4pzuSHSNvA==}
     engines: {node: '>=10'}
@@ -4448,6 +4466,10 @@ packages:
   fetch-blob@3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
     engines: {node: ^12.20 || >= 14.13}
+
+  ffmpeg-static@5.3.0:
+    resolution: {integrity: sha512-H+K6sW6TiIX6VGend0KQwthe+kaceeH/luE8dIZyOP35ik7ahYojDuqlTV1bOrtEwl01sy2HFNGQfi5IDJvotg==}
+    engines: {node: '>=16'}
 
   file-type@21.3.0:
     resolution: {integrity: sha512-8kPJMIGz1Yt/aPEwOsrR97ZyZaD1Iqm8PClb1nYFclUCkBi0Ma5IsYNQzvSFS9ib51lWyIw5mIT9rWzI/xjpzA==}
@@ -4713,6 +4735,9 @@ packages:
   http-proxy-agent@7.0.2:
     resolution: {integrity: sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==}
     engines: {node: '>= 14'}
+
+  http-response-object@3.0.2:
+    resolution: {integrity: sha512-bqX0XTF6fnXSQcEJ2Iuyr75yVakyjIDCqroJQ/aHfSdlM743Cwqoi2nDYMzLGWUcuTWGWy8AAvOKXTfiv6q9RA==}
 
   http-signature@1.4.0:
     resolution: {integrity: sha512-G5akfn7eKbpDN+8nPS/cb57YeA1jLTVxjpCj7tmm3QKPdyDy7T+qSC40e9ptydSWvkwjSXw1VbkpyEm39ukeAg==}
@@ -5593,6 +5618,9 @@ packages:
   pako@2.1.0:
     resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
 
+  parse-cache-control@1.0.1:
+    resolution: {integrity: sha512-60zvsJReQPX5/QP0Kzfd/VrpjScIQ7SHBW6bFCYfEP+fp0Eppr1SHhIO5nd1PjZtvclzSzES9D/p5nFJurwfWg==}
+
   parse-ms@3.0.0:
     resolution: {integrity: sha512-Tpb8Z7r7XbbtBTrM9UhpkzzaMrqA2VXMT3YChzYltwV3P3pM6t8wl7TvpMnSTosz1aQAdVib7kdoys7vYOPerw==}
     engines: {node: '>=12'}
@@ -5749,6 +5777,10 @@ packages:
 
   process-warning@5.0.0:
     resolution: {integrity: sha512-a39t9ApHNx2L4+HBnQKqxxHNs1r7KF+Intd8Q/g1bUh6q0WIp9voPXJ/x0j+ZL45KF1pJd9+q2jLIRMfvEshkA==}
+
+  progress@2.0.3:
+    resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
+    engines: {node: '>=0.4.0'}
 
   promise@7.3.1:
     resolution: {integrity: sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==}
@@ -6438,6 +6470,9 @@ packages:
   type-is@2.0.1:
     resolution: {integrity: sha512-OZs6gsjF4vMp32qrCbiVSkrFmXtG/AZhY3t0iAMrMBiAZyV9oALtXO8hsrHbMXF9x6L3grlFuwW2oAz7cav+Gw==}
     engines: {node: '>= 0.6'}
+
+  typedarray@0.0.6:
+    resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -7829,13 +7864,13 @@ snapshots:
 
   '@borewit/text-codec@0.2.1': {}
 
-  '@buape/carbon@0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(hono@4.12.5)(opusscript@0.1.1)':
+  '@buape/carbon@0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(hono@4.12.5)(opusscript@0.1.1)':
     dependencies:
       '@types/node': 25.3.5
       discord-api-types: 0.38.37
     optionalDependencies:
       '@cloudflare/workers-types': 4.20260120.0
-      '@discordjs/voice': 0.19.0(@discordjs/opus@0.10.0)(opusscript@0.1.1)
+      '@discordjs/voice': 0.19.0(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1)
       '@hono/node-server': 1.19.10(hono@4.12.5)
       '@types/bun': 1.3.9
       '@types/ws': 8.18.1
@@ -7972,6 +8007,13 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@derhuerst/http-basic@8.2.4':
+    dependencies:
+      caseless: 0.12.0
+      concat-stream: 2.0.0
+      http-response-object: 3.0.2
+      parse-cache-control: 1.0.1
+
   '@discordjs/node-pre-gyp@0.4.5':
     dependencies:
       detect-libc: 2.1.2
@@ -7997,11 +8039,11 @@ snapshots:
       - supports-color
     optional: true
 
-  '@discordjs/voice@0.19.0(@discordjs/opus@0.10.0)(opusscript@0.1.1)':
+  '@discordjs/voice@0.19.0(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1)':
     dependencies:
       '@types/ws': 8.18.1
       discord-api-types: 0.38.41
-      prism-media: 1.3.5(@discordjs/opus@0.10.0)(opusscript@0.1.1)
+      prism-media: 1.3.5(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1)
       tslib: 2.8.1
       ws: 8.19.0
     transitivePeerDependencies:
@@ -10884,7 +10926,6 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   agent-base@7.1.4: {}
 
@@ -11272,6 +11313,13 @@ snapshots:
 
   commander@5.1.0: {}
 
+  concat-stream@2.0.0:
+    dependencies:
+      buffer-from: 1.1.2
+      inherits: 2.0.4
+      readable-stream: 3.6.2
+      typedarray: 0.0.6
+
   console-control-strings@1.1.0:
     optional: true
 
@@ -11441,6 +11489,8 @@ snapshots:
   entities@4.5.0: {}
 
   entities@7.0.1: {}
+
+  env-paths@2.2.1: {}
 
   env-var@7.5.0: {}
 
@@ -11663,6 +11713,15 @@ snapshots:
     dependencies:
       node-domexception: '@nolyfill/domexception@1.0.28'
       web-streams-polyfill: 3.3.3
+
+  ffmpeg-static@5.3.0:
+    dependencies:
+      '@derhuerst/http-basic': 8.2.4
+      env-paths: 2.2.1
+      https-proxy-agent: 5.0.1
+      progress: 2.0.3
+    transitivePeerDependencies:
+      - supports-color
 
   file-type@21.3.0:
     dependencies:
@@ -12007,6 +12066,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  http-response-object@3.0.2:
+    dependencies:
+      '@types/node': 10.17.60
+
   http-signature@1.4.0:
     dependencies:
       assert-plus: 1.0.0
@@ -12019,7 +12082,6 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   https-proxy-agent@7.0.6:
     dependencies:
@@ -12830,13 +12892,13 @@ snapshots:
       ws: 8.19.0
       zod: 4.3.6
 
-  openclaw@2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3)):
+  openclaw@2026.3.2(@napi-rs/canvas@0.1.95)(@types/express@5.0.6)(audio-decode@2.2.3)(ffmpeg-static@5.3.0)(hono@4.12.5)(node-llama-cpp@3.16.2(typescript@5.9.3)):
     dependencies:
       '@agentclientprotocol/sdk': 0.14.1(zod@4.3.6)
       '@aws-sdk/client-bedrock': 3.1000.0
-      '@buape/carbon': 0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(hono@4.12.5)(opusscript@0.1.1)
+      '@buape/carbon': 0.0.0-beta-20260216184201(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(hono@4.12.5)(opusscript@0.1.1)
       '@clack/prompts': 1.0.1
-      '@discordjs/voice': 0.19.0(@discordjs/opus@0.10.0)(opusscript@0.1.1)
+      '@discordjs/voice': 0.19.0(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1)
       '@grammyjs/runner': 2.0.3(grammy@1.41.0)
       '@grammyjs/transformer-throttler': 1.2.1(grammy@1.41.0)
       '@homebridge/ciao': 1.3.5
@@ -13034,6 +13096,8 @@ snapshots:
 
   pako@2.1.0: {}
 
+  parse-cache-control@1.0.1: {}
+
   parse-ms@3.0.0: {}
 
   parse-ms@4.0.0: {}
@@ -13151,14 +13215,17 @@ snapshots:
     dependencies:
       parse-ms: 4.0.0
 
-  prism-media@1.3.5(@discordjs/opus@0.10.0)(opusscript@0.1.1):
+  prism-media@1.3.5(@discordjs/opus@0.10.0)(ffmpeg-static@5.3.0)(opusscript@0.1.1):
     optionalDependencies:
       '@discordjs/opus': 0.10.0
+      ffmpeg-static: 5.3.0
       opusscript: 0.1.1
 
   process-nextick-args@2.0.1: {}
 
   process-warning@5.0.0: {}
+
+  progress@2.0.3: {}
 
   promise@7.3.1:
     dependencies:
@@ -13371,7 +13438,6 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
-    optional: true
 
   readdirp@5.0.0: {}
 
@@ -13870,7 +13936,6 @@ snapshots:
   string_decoder@1.3.0:
     dependencies:
       safe-buffer: 5.2.1
-    optional: true
 
   stringify-entities@4.0.4:
     dependencies:
@@ -14043,6 +14108,8 @@ snapshots:
       content-type: 1.0.5
       media-typer: 1.1.0
       mime-types: 3.0.2
+
+  typedarray@0.0.6: {}
 
   typescript@5.9.3: {}
 
