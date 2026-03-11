@@ -174,15 +174,13 @@ else
 fi
 
 # ============================================================
-# 第 8 步：设置命令别名
+# 第 8 步：安装 PATH 入口
 # ============================================================
-ALIAS_LINE='alias openclaw="node ~/openclaw/dist/index.js"'
-if ! grep -qF "$ALIAS_LINE" ~/.bashrc 2>/dev/null; then
-    echo "$ALIAS_LINE" >> ~/.bashrc
-    ok "已将 openclaw 别名写入 ~/.bashrc"
-else
-    info "openclaw 别名已存在于 ~/.bashrc"
-fi
+BIN_DIR="$HOME/.local/bin"
+BIN_PATH="${BIN_DIR}/openclaw"
+mkdir -p "$BIN_DIR"
+ln -sf "${INSTALL_DIR}/dist/index.js" "$BIN_PATH"
+ok "已创建 PATH 入口：${BIN_PATH} -> ${INSTALL_DIR}/dist/index.js"
 
 # ============================================================
 # 完成，打印后续指引
@@ -194,8 +192,7 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "后续步骤："
 echo ""
-echo "  1. 加载别名使 openclaw 命令生效："
-echo "     source ~/.bashrc"
+echo "  1. 确认 ~/.local/bin 在 PATH 中（重新登录或执行 source ~/.profile）"
 echo ""
 echo "  2. 编辑环境变量配置："
 echo "     nano ${INSTALL_DIR}/.env"

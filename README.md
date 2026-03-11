@@ -80,13 +80,16 @@ corepack prepare pnpm@latest --activate
 pnpm -v
 ```
 
-#### 4. 配好命令别名
+#### 4. 配好 PATH 入口
 
-提前写入，避免构建完成后找不到命令：
+不要只写 alias。alias 只对当前 shell 的交互会话生效，不算真正“进 PATH”，在新终端、非交互 shell、脚本和 systemd 场景里都可能失效。
+
+推荐直接创建一个可执行入口到 `~/.local/bin/openclaw`：
 
 ```bash
-echo 'alias openclaw="node ~/openclaw/dist/index.js"' >> ~/.bashrc
-source ~/.bashrc
+mkdir -p ~/.local/bin
+ln -sf ~/openclaw/dist/index.js ~/.local/bin/openclaw
+source ~/.profile
 ```
 
 #### 5. 拉取源码并构建
@@ -371,9 +374,19 @@ git push origin main --force
 
 ### `openclaw: command not found`
 
+先确认真正的 PATH 入口存在：
+
 ```bash
-echo 'alias openclaw="node ~/openclaw/dist/index.js"' >> ~/.bashrc
-source ~/.bashrc
+mkdir -p ~/.local/bin
+ln -sf ~/openclaw/dist/index.js ~/.local/bin/openclaw
+source ~/.profile
+command -v openclaw
+```
+
+如果 `command -v openclaw` 仍然没输出，再检查 `~/.local/bin` 是否在 PATH：
+
+```bash
+echo "$PATH" | tr ':' '\n' | grep "$HOME/.local/bin"
 ```
 
 ### `pnpm: command not found`
