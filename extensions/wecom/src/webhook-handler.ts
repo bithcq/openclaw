@@ -38,6 +38,23 @@ const pendingMediaCache = new Map<
 >();
 type WecomCoreRuntime = PluginRuntime["channel"];
 
+function resolveWecomInboundRoute(params: {
+  cfg: OpenClawConfig;
+  core: WecomCoreRuntime;
+  account: ResolvedWecomAccount;
+  fromUser: string;
+}) {
+  return params.core.routing.resolveAgentRoute({
+    cfg: params.cfg,
+    channel: "wecom",
+    accountId: params.account.accountId,
+    peer: {
+      kind: "direct",
+      id: params.fromUser,
+    },
+  });
+}
+
 function cleanupDedupeCache(now = Date.now()): void {
   for (const [key, expireAt] of inboundDedupeCache.entries()) {
     if (expireAt <= now) {
@@ -388,6 +405,12 @@ async function dispatchInboundEvent(params: {
   };
 }): Promise<void> {
   const { cfg, account, event, core, log } = params;
+  const route = resolveWecomInboundRoute({
+    cfg,
+    core,
+    account,
+    fromUser: event.fromUser,
+  });
   const authorization = allowSenderForAccount(account, event.fromUser);
   if (!authorization.allowed) {
     log?.warn?.(`wecom: sender blocked (${event.fromUser}), reason=${authorization.reason}`);
@@ -439,7 +462,6 @@ async function dispatchInboundEvent(params: {
     );
 
     // 将识别结果当作普通文本消息处理，保持与文字消息完全一致的 dispatch 流程。
-    const sessionKey = `wecom:${event.fromUser}`;
     const keepLinks = shouldKeepLinksByUserIntent(transcription.text);
     const msgContext = core.reply.finalizeInboundContext({
       Body: transcription.text,
@@ -447,8 +469,8 @@ async function dispatchInboundEvent(params: {
       CommandBody: transcription.text,
       From: `wecom:${event.fromUser}`,
       To: `wecom:${event.fromUser}`,
-      SessionKey: sessionKey,
-      AccountId: account.accountId,
+      SessionKey: route.sessionKey,
+      AccountId: route.accountId,
       OriginatingChannel: "wecom",
       OriginatingTo: `wecom:${event.fromUser}`,
       ChatType: "direct",
@@ -508,7 +530,6 @@ async function dispatchInboundEvent(params: {
   }
 
   const keepLinks = event.msgType === "text" && shouldKeepLinksByUserIntent(event.content ?? "");
-  const sessionKey = `wecom:${event.fromUser}`;
   let inbound: Awaited<ReturnType<typeof buildInboundContext>>;
 
   if (event.msgType === "text") {
@@ -547,8 +568,8 @@ async function dispatchInboundEvent(params: {
     CommandBody: inbound.body,
     From: `wecom:${event.fromUser}`,
     To: `wecom:${event.fromUser}`,
-    SessionKey: sessionKey,
-    AccountId: account.accountId,
+    SessionKey: route.sessionKey,
+    AccountId: route.accountId,
     OriginatingChannel: "wecom",
     OriginatingTo: `wecom:${event.fromUser}`,
     ChatType: "direct",
