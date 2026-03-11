@@ -317,9 +317,17 @@ export async function startGatewayServer(
   }
 
   const autoEnable = applyPluginAutoEnable({ config: configSnapshot.config, env: process.env });
+  let startupConfigSnapshot = configSnapshot;
   if (autoEnable.changes.length > 0) {
+    startupConfigSnapshot = {
+      ...configSnapshot,
+      parsed: autoEnable.config,
+      resolved: autoEnable.config,
+      config: autoEnable.config,
+    };
     try {
       await writeConfigFile(autoEnable.config);
+      startupConfigSnapshot = await readConfigFileSnapshot();
       log.info(
         `gateway: auto-enabled plugins:\n${autoEnable.changes
           .map((entry) => `- ${entry}`)
@@ -399,7 +407,7 @@ export async function startGatewayServer(
   // Fail fast before startup if required refs are unresolved.
   let cfgAtStart: OpenClawConfig;
   {
-    const freshSnapshot = await readConfigFileSnapshot();
+    const freshSnapshot = startupConfigSnapshot;
     if (!freshSnapshot.valid) {
       const issues =
         freshSnapshot.issues.length > 0
@@ -420,7 +428,7 @@ export async function startGatewayServer(
     });
   }
 
-  cfgAtStart = loadConfig();
+  cfgAtStart = startupConfigSnapshot.config;
   const authBootstrap = await ensureGatewayStartupAuth({
     cfg: cfgAtStart,
     env: process.env,

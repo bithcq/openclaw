@@ -114,7 +114,9 @@ openclaw --version
 
 ### `.env`
 
-模型 provider 和 API 密钥由 onboarding 向导写入 `openclaw.json`。`.env` 只放向导不管的参数：
+模型 provider 和 API 密钥由 onboarding 向导写入 `openclaw.json`。`.env` 只放向导不管的参数。
+
+源码构建安装场景下，建议写到 `~/openclaw/.env`；服务启动时也会回退读取 CLI 入口所在项目根目录的 `.env`：
 
 ```bash
 cp ~/openclaw/.env.example ~/openclaw/.env
@@ -154,7 +156,8 @@ openclaw onboard --install-daemon
 - **Search provider**：`Skip for now`（定制版已内置 web_search）
 - **Configure skills / hooks**：`No` / `Skip`
 - **Hatch**：`Hatch in TUI`
-- **Select channel**：`WeCom (企业微信)` → `Skip for now`（本地插件已启用，不需要从 npm 下载）
+- **Select channel**：`WeCom (企业微信)`
+- 如果随后出现 **Install WeCom plugin?**：选择 `Use local plugin path`；不要选 `Skip for now`，否则会直接跳过当前轮的企微通道设置
 
 `--install-daemon` 会自动创建 systemd 用户服务并启动 Gateway。
 

@@ -12,10 +12,12 @@ async function writeEnvFile(filePath: string, contents: string) {
 async function withIsolatedEnvAndCwd(run: () => Promise<void>) {
   const prevEnv = { ...process.env };
   const prevCwd = process.cwd();
+  const prevArgv = [...process.argv];
   try {
     await run();
   } finally {
     process.chdir(prevCwd);
+    process.argv = prevArgv;
     for (const key of Object.keys(process.env)) {
       if (!(key in prevEnv)) {
         delete process.env[key];
@@ -94,6 +96,29 @@ describe("loadDotEnv", () => {
 
         expect(process.env.FOO).toBe("from-global");
       });
+    });
+  });
+
+  it("loads project-root .env next to the dist entrypoint for service installs", async () => {
+    await withIsolatedEnvAndCwd(async () => {
+      const base = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-dotenv-service-test-"));
+      const repoDir = path.join(base, "openclaw");
+      const distDir = path.join(repoDir, "dist");
+      const otherDir = path.join(base, "elsewhere");
+      process.env.OPENCLAW_STATE_DIR = path.join(base, "state");
+      await fs.mkdir(otherDir, { recursive: true });
+      await fs.mkdir(distDir, { recursive: true });
+      await fs.mkdir(process.env.OPENCLAW_STATE_DIR, { recursive: true });
+      await writeEnvFile(path.join(repoDir, ".env"), "WECOM_CORP_ID=from-project\n");
+      await fs.writeFile(path.join(distDir, "index.js"), "", "utf8");
+
+      process.chdir(otherDir);
+      process.argv[1] = path.join(distDir, "index.js");
+      delete process.env.WECOM_CORP_ID;
+
+      loadDotEnv({ quiet: true });
+
+      expect(process.env.WECOM_CORP_ID).toBe("from-project");
     });
   });
 });
