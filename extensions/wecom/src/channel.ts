@@ -199,14 +199,7 @@ export const wecomPlugin: ChannelPlugin<ResolvedWecomAccount> = {
   },
   outbound: {
     deliveryMode: "gateway",
-    // 企业微信文本统一按 500 字分片发送。
-    chunker: (text, limit) => {
-      const rawLimit = Number.isFinite(limit)
-        ? Math.max(1, Math.floor(limit))
-        : WECOM_TEXT_MAX_CHARS;
-      return splitWecomTextByChars(text, Math.min(rawLimit, WECOM_TEXT_MAX_CHARS));
-    },
-    textChunkLimit: WECOM_TEXT_MAX_CHARS,
+    // 让 WeCom 自己负责文本拆分和节流，避免上层先拆段后绕过发送间隔。
     sendText: async ({ cfg, to, text, accountId }) => {
       const account = resolveWecomAccount(cfg, accountId);
       const target = normalizeTarget(to) ?? to;
