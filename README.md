@@ -183,6 +183,10 @@ openclaw onboard --install-daemon
 - **Select channel**：`WeCom (企业微信)`
 - 如果随后出现 **Install WeCom plugin?**：选择 `Use local plugin path`；不要选 `Skip for now`，否则会直接跳过当前轮的企微通道设置
 
+定制版在首次 onboarding 时会默认写入：
+
+- `tools.profile = full`
+
 `--install-daemon` 会自动创建 systemd 用户服务并启动 Gateway。
 
 ### 开放局域网访问
