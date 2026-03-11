@@ -58,11 +58,6 @@ import {
 } from "./tool-policy.js";
 import { resolveWorkspaceRoot } from "./workspace-dir.js";
 
-function isOpenAIProvider(provider?: string) {
-  const normalized = provider?.trim().toLowerCase();
-  return normalized === "openai" || normalized === "openai-codex";
-}
-
 const TOOL_DENY_BY_MESSAGE_PROVIDER: Readonly<Record<string, readonly string[]>> = {
   voice: ["tts"],
 };
@@ -335,7 +330,6 @@ export function createOpenClawCodingTools(options?: {
   const applyPatchWorkspaceOnly = workspaceOnly || applyPatchConfig?.workspaceOnly !== false;
   const applyPatchEnabled =
     !!applyPatchConfig?.enabled &&
-    isOpenAIProvider(options?.modelProvider) &&
     isApplyPatchAllowedForModel({
       modelProvider: options?.modelProvider,
       modelId: options?.modelId,
