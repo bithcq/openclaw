@@ -178,9 +178,40 @@ fi
 # ============================================================
 BIN_DIR="$HOME/.local/bin"
 BIN_PATH="${BIN_DIR}/openclaw"
+NODE_BIN="$(command -v node)"
 mkdir -p "$BIN_DIR"
-ln -sf "${INSTALL_DIR}/dist/index.js" "$BIN_PATH"
-ok "已创建 PATH 入口：${BIN_PATH} -> ${INSTALL_DIR}/dist/index.js"
+cat > "$BIN_PATH" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+
+OPENCLAW_ROOT="${INSTALL_DIR}"
+OPENCLAW_CLI="\${OPENCLAW_ROOT}/dist/index.js"
+PREFERRED_NODE="${NODE_BIN}"
+
+if [ -x "\${PREFERRED_NODE}" ]; then
+  exec "\${PREFERRED_NODE}" "\${OPENCLAW_CLI}" "\$@"
+fi
+
+for candidate in \
+  /usr/bin/node \
+  /usr/local/bin/node \
+  "\$HOME/.nvm/versions/node"/*/bin/node \
+  "\$HOME/.volta/bin/node"
+do
+  if [ -x "\$candidate" ]; then
+    exec "\$candidate" "\${OPENCLAW_CLI}" "\$@"
+  fi
+done
+
+if command -v node >/dev/null 2>&1; then
+  exec "\$(command -v node)" "\${OPENCLAW_CLI}" "\$@"
+fi
+
+echo "openclaw: node not found; install Node.js or update ~/.local/bin/openclaw" >&2
+exit 127
+EOF
+chmod +x "$BIN_PATH"
+ok "已创建 PATH 入口包装脚本：${BIN_PATH}"
 
 # ============================================================
 # 完成，打印后续指引

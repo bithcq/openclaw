@@ -84,11 +84,32 @@ pnpm -v
 
 不要只写 alias。alias 只对当前 shell 的交互会话生效，不算真正“进 PATH”，在新终端、非交互 shell、脚本和 systemd 场景里都可能失效。
 
-推荐直接创建一个可执行入口到 `~/.local/bin/openclaw`：
+推荐直接创建一个可执行包装脚本到 `~/.local/bin/openclaw`。不要直接软链到 `dist/index.js`，因为它的 shebang 是 `#!/usr/bin/env node`，在某些 systemd / 非交互 PATH 场景里会再次出现 `env: 'node': No such file or directory`。
 
 ```bash
 mkdir -p ~/.local/bin
-ln -sf ~/openclaw/dist/index.js ~/.local/bin/openclaw
+cat > ~/.local/bin/openclaw <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+
+OPENCLAW_ROOT="$HOME/openclaw"
+OPENCLAW_CLI="$OPENCLAW_ROOT/dist/index.js"
+PREFERRED_NODE="$(command -v node)"
+
+if [ -x "$PREFERRED_NODE" ]; then
+  exec "$PREFERRED_NODE" "$OPENCLAW_CLI" "$@"
+fi
+
+for candidate in /usr/bin/node /usr/local/bin/node "$HOME/.nvm/versions/node"/*/bin/node "$HOME/.volta/bin/node"; do
+  if [ -x "$candidate" ]; then
+    exec "$candidate" "$OPENCLAW_CLI" "$@"
+  fi
+done
+
+echo "openclaw: node not found" >&2
+exit 127
+EOF
+chmod +x ~/.local/bin/openclaw
 source ~/.profile
 ```
 
@@ -378,7 +399,28 @@ git push origin main --force
 
 ```bash
 mkdir -p ~/.local/bin
-ln -sf ~/openclaw/dist/index.js ~/.local/bin/openclaw
+cat > ~/.local/bin/openclaw <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+
+OPENCLAW_ROOT="$HOME/openclaw"
+OPENCLAW_CLI="$OPENCLAW_ROOT/dist/index.js"
+PREFERRED_NODE="$(command -v node)"
+
+if [ -x "$PREFERRED_NODE" ]; then
+  exec "$PREFERRED_NODE" "$OPENCLAW_CLI" "$@"
+fi
+
+for candidate in /usr/bin/node /usr/local/bin/node "$HOME/.nvm/versions/node"/*/bin/node "$HOME/.volta/bin/node"; do
+  if [ -x "$candidate" ]; then
+    exec "$candidate" "$OPENCLAW_CLI" "$@"
+  fi
+done
+
+echo "openclaw: node not found" >&2
+exit 127
+EOF
+chmod +x ~/.local/bin/openclaw
 source ~/.profile
 command -v openclaw
 ```
