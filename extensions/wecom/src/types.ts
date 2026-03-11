@@ -23,7 +23,9 @@ export interface WecomAccountRaw {
   doubaoAsrAppId?: string;
   /** 豆包语音识别：API Token */
   doubaoAsrToken?: string;
-  /** 豆包语音识别：集群名称，默认 volcengine_streaming_common */
+  /** 豆包语音识别：资源 ID，v3 默认 volc.seedasr.sauc.duration */
+  doubaoAsrResourceId?: string;
+  /** 兼容旧版 v1 接口配置；未设置 resourceId 时可回退读取 */
   doubaoAsrCluster?: string;
 }
 
@@ -51,7 +53,9 @@ export interface ResolvedWecomAccount {
   doubaoAsrAppId: string;
   /** 豆包语音识别 Token */
   doubaoAsrToken: string;
-  /** 豆包语音识别集群 */
+  /** 豆包语音识别资源 ID */
+  doubaoAsrResourceId: string;
+  /** 兼容旧版 v1 接口配置 */
   doubaoAsrCluster: string;
 }
 

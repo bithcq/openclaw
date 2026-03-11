@@ -141,7 +141,7 @@ WECOM_CALLBACK_PATH=/api/wecom/callback
 # 可选：豆包语音识别（企微语音消息转文字）
 # WECOM_DOUBAO_ASR_APP_ID=your-app-id
 # WECOM_DOUBAO_ASR_TOKEN=your-token
-# WECOM_DOUBAO_ASR_CLUSTER=volcengine_streaming_common
+# WECOM_DOUBAO_ASR_RESOURCE_ID=your-resource-id
 ```
 
 ### 首次启动

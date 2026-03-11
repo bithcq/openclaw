@@ -27,6 +27,7 @@ const DEDUPE_TTL_MS = 10 * 60 * 1000;
 const PENDING_MEDIA_TTL_MS = 30 * 60 * 1000;
 const MAX_PENDING_MEDIA_PER_SESSION = 8;
 const WECOM_TEXT_MAX_CHARS = 500;
+const WECOM_TEXT_CHUNK_DELAY_MS = 500;
 const inboundDedupeCache = new Map<string, number>();
 const pendingMediaCache = new Map<
   string,
@@ -114,12 +115,15 @@ async function sendWecomTextInChunks(params: {
   const { account, to, content } = params;
   // 企业微信单条消息限制为 500 字，超出后按顺序拆分发送。
   const chunks = splitWecomTextByChars(content, WECOM_TEXT_MAX_CHARS);
-  for (const chunk of chunks) {
+  for (const [index, chunk] of chunks.entries()) {
     await sendTextMessage({
       account,
       to,
       content: chunk,
     });
+    if (chunks.length > 1 && index < chunks.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, WECOM_TEXT_CHUNK_DELAY_MS));
+    }
   }
 }
 
@@ -392,7 +396,9 @@ async function dispatchInboundEvent(params: {
 
   // 语音消息：下载后通过豆包 ASR 转文字，再以文本消息身份 dispatch 到 agent。
   if (event.msgType === "voice") {
-    const asrConfigured = Boolean(account.doubaoAsrAppId && account.doubaoAsrToken);
+    const asrConfigured = Boolean(
+      account.doubaoAsrAppId && account.doubaoAsrToken && account.doubaoAsrResourceId,
+    );
     if (!asrConfigured) {
       await sendWecomTextInChunks({
         account,
@@ -402,18 +408,18 @@ async function dispatchInboundEvent(params: {
       return;
     }
 
-    let transcribedText: string;
+    let transcription: Awaited<ReturnType<typeof transcribeVoiceBuffer>>;
     try {
       // 下载企业微信语音素材（amr 格式，限 20MB）。
       const downloaded = await downloadMediaById({
         account,
         mediaId: event.mediaId ?? "",
       });
-      transcribedText = await transcribeVoiceBuffer({
+      transcription = await transcribeVoiceBuffer({
         config: {
           appId: account.doubaoAsrAppId,
           token: account.doubaoAsrToken,
-          cluster: account.doubaoAsrCluster,
+          resourceId: account.doubaoAsrResourceId,
         },
         audioBuffer: downloaded.contentBytes,
         format: event.format ?? "amr",
@@ -429,16 +435,16 @@ async function dispatchInboundEvent(params: {
     }
 
     log?.info?.(
-      `wecom: voice transcribed, fromUser=${event.fromUser}, text="${transcribedText.slice(0, 50)}"`,
+      `wecom: voice transcribed, fromUser=${event.fromUser}, durationMs=${transcription.durationMs}, inputBytes=${transcription.inputBytes}, pcmBytes=${transcription.pcmBytes}, chunkCount=${transcription.chunkCount}, text="${transcription.text.slice(0, 50)}"`,
     );
 
     // 将识别结果当作普通文本消息处理，保持与文字消息完全一致的 dispatch 流程。
     const sessionKey = `wecom:${event.fromUser}`;
-    const keepLinks = shouldKeepLinksByUserIntent(transcribedText);
+    const keepLinks = shouldKeepLinksByUserIntent(transcription.text);
     const msgContext = core.reply.finalizeInboundContext({
-      Body: transcribedText,
-      RawBody: transcribedText,
-      CommandBody: transcribedText,
+      Body: transcription.text,
+      RawBody: transcription.text,
+      CommandBody: transcription.text,
       From: `wecom:${event.fromUser}`,
       To: `wecom:${event.fromUser}`,
       SessionKey: sessionKey,

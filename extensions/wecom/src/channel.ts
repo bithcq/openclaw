@@ -22,6 +22,7 @@ import { createWecomWebhookHandler } from "./webhook-handler.js";
 const CHANNEL_ID = "wecom";
 const DEFAULT_WEBHOOK_PATH = "/api/wecom/callback";
 const WECOM_TEXT_MAX_CHARS = 500;
+const WECOM_TEXT_CHUNK_DELAY_MS = 500;
 
 const WecomAccountSchema = z
   .object({
@@ -217,12 +218,16 @@ export const wecomPlugin: ChannelPlugin<ResolvedWecomAccount> = {
           chatId: target,
         };
       }
-      for (const chunk of splitWecomTextByChars(cleanedText, WECOM_TEXT_MAX_CHARS)) {
+      const chunks = splitWecomTextByChars(cleanedText, WECOM_TEXT_MAX_CHARS);
+      for (const [index, chunk] of chunks.entries()) {
         await sendTextMessage({
           account,
           to: target,
           content: chunk,
         });
+        if (chunks.length > 1 && index < chunks.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, WECOM_TEXT_CHUNK_DELAY_MS));
+        }
       }
       return {
         channel: CHANNEL_ID,

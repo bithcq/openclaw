@@ -143,7 +143,7 @@ export function resolveWecomAccount(
   const dmPolicy = pickDmPolicy(merged.dmPolicy ?? process.env.WECOM_DM_POLICY);
   const enabled = toBool(merged.enabled, true);
 
-  // 豆包语音识别配置，三项均可通过环境变量回退。
+  // 豆包语音识别配置，优先使用 v3 的 resourceId；旧 cluster 配置仅作兼容回退。
   const doubaoAsrAppId =
     toTrimmed(merged.doubaoAsrAppId) || toTrimmed(process.env.WECOM_DOUBAO_ASR_APP_ID);
   const doubaoAsrToken =
@@ -152,6 +152,10 @@ export function resolveWecomAccount(
     toTrimmed(merged.doubaoAsrCluster) ||
     toTrimmed(process.env.WECOM_DOUBAO_ASR_CLUSTER) ||
     "volcengine_streaming_common";
+  const doubaoAsrResourceId =
+    toTrimmed(merged.doubaoAsrResourceId) ||
+    toTrimmed(process.env.WECOM_DOUBAO_ASR_RESOURCE_ID) ||
+    (doubaoAsrCluster !== "volcengine_streaming_common" ? doubaoAsrCluster : "");
 
   return {
     accountId: resolvedAccountId,
@@ -170,6 +174,7 @@ export function resolveWecomAccount(
     allowFrom,
     doubaoAsrAppId,
     doubaoAsrToken,
+    doubaoAsrResourceId,
     doubaoAsrCluster,
   };
 }
