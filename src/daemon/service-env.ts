@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { VERSION } from "../version.js";
@@ -98,6 +99,24 @@ function addCommonEnvConfiguredBinDirs(
   addNonEmptyDir(dirs, appendSubdir(env?.ASDF_DATA_DIR, "shims"));
 }
 
+function resolveExistingNvmVersionBinDirs(nvmRoot: string | undefined): string[] {
+  if (!nvmRoot) {
+    return [];
+  }
+  const versionsRoot = path.posix.join(nvmRoot, "versions", "node");
+  let entries: string[];
+  try {
+    entries = fs
+      .readdirSync(versionsRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .toSorted((left, right) => right.localeCompare(left, undefined, { numeric: true }));
+  } catch {
+    return [];
+  }
+  return entries.map((entry) => path.posix.join(versionsRoot, entry, "bin"));
+}
+
 function resolveSystemPathDirs(platform: NodeJS.Platform): string[] {
   if (platform === "darwin") {
     return ["/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"];
@@ -176,6 +195,7 @@ export function resolveLinuxUserBinDirs(
 
   // Node version managers
   dirs.push(`${home}/.nvm/current/bin`); // nvm with current symlink
+  dirs.push(...resolveExistingNvmVersionBinDirs(env?.NVM_DIR || `${home}/.nvm`));
   dirs.push(`${home}/.fnm/current/bin`); // fnm
   dirs.push(`${home}/.local/share/pnpm`); // pnpm global bin
 

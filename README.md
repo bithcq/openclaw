@@ -44,7 +44,7 @@ wsl -d Ubuntu-24.04
 bash <(curl -fsSL https://raw.githubusercontent.com/bithcq/openclaw/main/scripts/install-custom.sh)
 ```
 
-脚本自动完成：系统依赖检查 → Node ≥ 22 检查 → pnpm 安装 → 拉取源码 → 构建 → 生成 `.env` 模板。
+脚本自动完成：系统依赖检查 → Node ≥ 22 检查 → pnpm 安装 → 拉取源码 → `pnpm ui:build` → `pnpm build` → 生成 `.env` 模板。
 
 ### 手动安装
 

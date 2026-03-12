@@ -10,7 +10,7 @@
 #   1. 检查 Node.js ≥ 22
 #   2. 检查/安装 pnpm
 #   3. git clone 源码（已存在则 pull 更新）
-#   4. pnpm install && pnpm build
+#   4. pnpm install && pnpm ui:build && pnpm build
 #   5. 生成 .env 模板（如不存在）
 #   6. 打印后续配置指引
 # ============================================================
@@ -154,6 +154,11 @@ ok "依赖安装完成"
 # ============================================================
 # 第 6 步：构建
 # ============================================================
+info "构建 Control UI（pnpm ui:build）..."
+pnpm ui:build
+
+ok "Control UI 构建完成"
+
 info "构建项目（pnpm build）..."
 pnpm build
 

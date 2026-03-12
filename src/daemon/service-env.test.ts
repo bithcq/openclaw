@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -95,6 +96,28 @@ describe("getMinimalServicePathParts - Linux user directories", () => {
     expect(result).toContain("/opt/asdf/shims");
     expect(result).toContain("/opt/nvm/current/bin");
     expect(result).toContain("/opt/fnm/current/bin");
+  });
+
+  it("includes concrete nvm version bin directories when current symlink is missing", () => {
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), "openclaw-service-env-"));
+    fs.mkdirSync(path.join(home, ".nvm", "versions", "node", "v22.22.0", "bin"), {
+      recursive: true,
+    });
+    fs.mkdirSync(path.join(home, ".nvm", "versions", "node", "v20.19.0", "bin"), {
+      recursive: true,
+    });
+
+    const result = getMinimalServicePathParts({
+      platform: "linux",
+      home,
+    });
+
+    expect(result).toContain(`${home}/.nvm/current/bin`);
+    expect(result).toContain(`${home}/.nvm/versions/node/v22.22.0/bin`);
+    expect(result).toContain(`${home}/.nvm/versions/node/v20.19.0/bin`);
+    expect(result.indexOf(`${home}/.nvm/versions/node/v22.22.0/bin`)).toBeLessThan(
+      result.indexOf(`${home}/.nvm/versions/node/v20.19.0/bin`),
+    );
   });
 
   it("includes version manager directories on macOS when HOME is set", () => {
